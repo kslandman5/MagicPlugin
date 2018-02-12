@@ -4,11 +4,9 @@ import com.elmakers.mine.bukkit.api.action.CastContext;
 import com.elmakers.mine.bukkit.api.block.BlockData;
 import com.elmakers.mine.bukkit.api.magic.Mage;
 import com.elmakers.mine.bukkit.api.magic.MageController;
+import com.elmakers.mine.bukkit.api.magic.MaterialSet;
 import com.elmakers.mine.bukkit.block.UndoList;
-import org.bukkit.Material;
-
-import java.util.HashSet;
-import java.util.Set;
+import com.elmakers.mine.bukkit.magic.MaterialSets;
 
 public class UndoBatch implements com.elmakers.mine.bukkit.api.batch.UndoBatch {
     protected final MageController controller;
@@ -19,7 +17,7 @@ public class UndoBatch implements com.elmakers.mine.bukkit.api.batch.UndoBatch {
     protected int listProcessed;
     protected double partialWork = 0;
 
-    private final Set<Material> attachables;
+    private final MaterialSet attachables;
 
     public UndoBatch(UndoList blockList) {
         Mage mage = blockList.getOwner();
@@ -27,29 +25,24 @@ public class UndoBatch implements com.elmakers.mine.bukkit.api.batch.UndoBatch {
 
         undoList = blockList;
         this.applyPhysics = blockList.getApplyPhysics();
-        this.attachables = new HashSet<>();
 
         CastContext context = undoList.getContext();
         if (context != null) {
             context.playEffects("undo");
         }
 
-        Set<Material> addToAttachables = controller.getMaterialSet("attachable");
-        if (addToAttachables != null) {
-            attachables.addAll(addToAttachables);
+        MaterialSets.Union union = MaterialSets.unionBuilder();
+        for (MaterialSet addToAttachables : new MaterialSet[] {
+                controller.getMaterialSet("attachable"),
+                controller.getMaterialSet("attachable_wall"),
+                controller.getMaterialSet("attachable_double"),
+                controller.getMaterialSet("delayed"),
+        }) {
+            if (addToAttachables != null) {
+                union.add(addToAttachables);
+            }
         }
-        addToAttachables = controller.getMaterialSet("attachable_wall");
-        if (addToAttachables != null) {
-            attachables.addAll(addToAttachables);
-        }
-        addToAttachables = controller.getMaterialSet("attachable_double");
-        if (addToAttachables != null) {
-            attachables.addAll(addToAttachables);
-        }
-        addToAttachables = controller.getMaterialSet("delayed");
-        if (addToAttachables != null) {
-            attachables.addAll(addToAttachables);
-        }
+        this.attachables = union.build();
 
         // Sort so attachable items don't break
         undoList.sort(attachables);

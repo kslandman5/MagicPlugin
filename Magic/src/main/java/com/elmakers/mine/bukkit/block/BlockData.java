@@ -12,11 +12,10 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.util.BlockVector;
 import com.elmakers.mine.bukkit.api.block.UndoList;
-
+import com.elmakers.mine.bukkit.api.magic.MaterialSet;
 import com.elmakers.mine.bukkit.utility.ConfigurationUtils;
 
 import java.lang.ref.WeakReference;
-import java.util.Set;
 
 /**
  * Stores a cached Block. Stores the coordinates and world, but will look up a block reference on demand.
@@ -340,10 +339,10 @@ public class BlockData extends MaterialAndData implements com.elmakers.mine.bukk
     }
 
     @Override
-    public boolean containsAny(Set<Material> materials)
-    {
-        if (materials.contains(material)) return true;
-        if (priorState != null) {
+    public boolean containsAny(MaterialSet materials) {
+        if (materials.testMaterialAndData(this)) {
+            return true;
+        } else if (priorState != null) {
             return priorState.containsAny(materials);
         }
 

@@ -41,6 +41,7 @@
 							<roots>
 								<root>base</root>
 								<root>6.9+</root>
+								<root>7.0+</root>
 							</roots>
 						</configurationFile>
 					</analysisConfigurationFiles>

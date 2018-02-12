@@ -21,6 +21,7 @@ import com.elmakers.mine.bukkit.api.event.AddSpellEvent;
 import com.elmakers.mine.bukkit.api.event.SpellUpgradeEvent;
 import com.elmakers.mine.bukkit.api.event.WandPreActivateEvent;
 import com.elmakers.mine.bukkit.api.magic.MageController;
+import com.elmakers.mine.bukkit.api.magic.MaterialSet;
 import com.elmakers.mine.bukkit.api.magic.Messages;
 import com.elmakers.mine.bukkit.api.spell.CostReducer;
 import com.elmakers.mine.bukkit.api.spell.Spell;
@@ -2292,10 +2293,10 @@ public class Wand extends WandProperties implements CostReducer, com.elmakers.mi
 			item.setType(icon.getMaterial());
 			item.setDurability(icon.getData());
 		} else {
-			Set<Material> enchantableMaterials = controller.getMaterialSet("enchantable");
-			if (!enchantableMaterials.contains(item.getType())) {
+			MaterialSet enchantableMaterials = controller.getMaterialSet("enchantable");
+			if (!enchantableMaterials.testItem(item)) {
 				item.setType(EnchantableWandMaterial);
-				item.setDurability((short)0);
+				item.setDurability((short) 0);
 			}
 		}
 		updateName();

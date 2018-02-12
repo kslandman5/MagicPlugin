@@ -241,5 +241,96 @@
                 }
             ]
         }
+    },
+    "7.0+" : {
+        "revapi" : {
+            "ignore" : [
+                {
+                    "code": "java.method.returnTypeChanged",
+                    "old": "method java.util.Set<org.bukkit.Material> com.elmakers.mine.bukkit.api.action.CastContext::getMaterialSet(java.lang.String)",
+                    "new": "method com.elmakers.mine.bukkit.api.magic.MaterialSet com.elmakers.mine.bukkit.api.action.CastContext::getMaterialSet(java.lang.String)",
+                    "oldType": "java.util.Set<org.bukkit.Material>",
+                    "newType": "com.elmakers.mine.bukkit.api.magic.MaterialSet",
+                    "package": "com.elmakers.mine.bukkit.api.action",
+                    "classSimpleName": "CastContext",
+                    "methodName": "getMaterialSet",
+                    "elementKind": "method",
+                    "justification": "Material data support"
+                },
+                {
+                    "code": "java.method.parameterTypeChanged",
+                    "old": "parameter boolean com.elmakers.mine.bukkit.api.block.BlockData::containsAny(===java.util.Set<org.bukkit.Material>===)",
+                    "new": "parameter boolean com.elmakers.mine.bukkit.api.block.BlockData::containsAny(===com.elmakers.mine.bukkit.api.magic.MaterialSet===)",
+                    "oldType": "java.util.Set<org.bukkit.Material>",
+                    "newType": "com.elmakers.mine.bukkit.api.magic.MaterialSet",
+                    "package": "com.elmakers.mine.bukkit.api.block",
+                    "classSimpleName": "BlockData",
+                    "methodName": "containsAny",
+                    "parameterIndex": "0",
+                    "elementKind": "parameter",
+                    "justification": "Material data support"
+                },
+                {
+                    "code": "java.method.returnTypeChanged",
+                    "old": "method java.util.Set<org.bukkit.Material> com.elmakers.mine.bukkit.api.magic.Mage::getRestrictedMaterials()",
+                    "new": "method com.elmakers.mine.bukkit.api.magic.MaterialSet com.elmakers.mine.bukkit.api.magic.Mage::getRestrictedMaterials()",
+                    "oldType": "java.util.Set<org.bukkit.Material>",
+                    "newType": "com.elmakers.mine.bukkit.api.magic.MaterialSet",
+                    "package": "com.elmakers.mine.bukkit.api.magic",
+                    "classSimpleName": "Mage",
+                    "methodName": "getRestrictedMaterials",
+                    "elementKind": "method",
+                    "justification": "Material data support"
+                },
+                {
+                    "code": "java.method.returnTypeChanged",
+                    "old": "method java.util.Set<org.bukkit.Material> com.elmakers.mine.bukkit.api.magic.MageController::getBuildingMaterials()",
+                    "new": "method com.elmakers.mine.bukkit.api.magic.MaterialSet com.elmakers.mine.bukkit.api.magic.MageController::getBuildingMaterials()",
+                    "oldType": "java.util.Set<org.bukkit.Material>",
+                    "newType": "com.elmakers.mine.bukkit.api.magic.MaterialSet",
+                    "package": "com.elmakers.mine.bukkit.api.magic",
+                    "classSimpleName": "MageController",
+                    "methodName": "getBuildingMaterials",
+                    "elementKind": "method",
+                    "justification": "Material data support"
+                },
+                {
+                    "code": "java.method.returnTypeChanged",
+                    "old": "method java.util.Set<org.bukkit.Material> com.elmakers.mine.bukkit.api.magic.MageController::getDestructibleMaterials()",
+                    "new": "method com.elmakers.mine.bukkit.api.magic.MaterialSet com.elmakers.mine.bukkit.api.magic.MageController::getDestructibleMaterials()",
+                    "oldType": "java.util.Set<org.bukkit.Material>",
+                    "newType": "com.elmakers.mine.bukkit.api.magic.MaterialSet",
+                    "package": "com.elmakers.mine.bukkit.api.magic",
+                    "classSimpleName": "MageController",
+                    "methodName": "getDestructibleMaterials",
+                    "elementKind": "method",
+                    "justification": "Material data support"
+                },
+                {
+                    "code": "java.method.returnTypeChanged",
+                    "old": "method java.util.Set<org.bukkit.Material> com.elmakers.mine.bukkit.api.magic.MageController::getMaterialSet(java.lang.String)",
+                    "new": "method com.elmakers.mine.bukkit.api.magic.MaterialSet com.elmakers.mine.bukkit.api.magic.MageController::getMaterialSet(java.lang.String)",
+                    "oldType": "java.util.Set<org.bukkit.Material>",
+                    "newType": "com.elmakers.mine.bukkit.api.magic.MaterialSet",
+                    "package": "com.elmakers.mine.bukkit.api.magic",
+                    "classSimpleName": "MageController",
+                    "methodName": "getMaterialSet",
+                    "elementKind": "method",
+                    "justification": "Material data support"
+                },
+                {
+                    "code": "java.method.returnTypeChanged",
+                    "old": "method java.util.Set<org.bukkit.Material> com.elmakers.mine.bukkit.api.magic.MageController::getRestrictedMaterials()",
+                    "new": "method com.elmakers.mine.bukkit.api.magic.MaterialSet com.elmakers.mine.bukkit.api.magic.MageController::getRestrictedMaterials()",
+                    "oldType": "java.util.Set<org.bukkit.Material>",
+                    "newType": "com.elmakers.mine.bukkit.api.magic.MaterialSet",
+                    "package": "com.elmakers.mine.bukkit.api.magic",
+                    "classSimpleName": "MageController",
+                    "methodName": "getRestrictedMaterials",
+                    "elementKind": "method",
+                    "justification": "Material data support"
+                }
+            ]
+        }
     }
 }

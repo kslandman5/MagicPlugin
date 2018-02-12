@@ -6,14 +6,13 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
-import java.util.Set;
 import java.util.UUID;
 
 import com.elmakers.mine.bukkit.api.magic.Mage;
+import com.elmakers.mine.bukkit.api.magic.MaterialSet;
 import com.elmakers.mine.bukkit.api.magic.Messages;
 import com.elmakers.mine.bukkit.api.spell.Spell;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.ConfigurationSection;
 
@@ -59,13 +58,16 @@ public class AnimateSpell extends SimulateSpell
 		if (seedRadius > 0 && materials != null && !materials.isEmpty()) {
 			targetMaterial = new MaterialAndData(RandomUtils.getRandom(materials));
 		} else if (parameters.contains("material")) {
-			targetMaterial = ConfigurationUtils.getMaterialAndData(parameters, "material", targetMaterial);
-			addDestructible(targetMaterial.getMaterial());
+            targetMaterial = ConfigurationUtils.getMaterialAndData(parameters,
+                    "material", targetMaterial);
+            if (targetMaterial.isValid()) {
+                addDestructible(targetMaterial);
+            }
 		}
 
         if (!mage.isSuperPowered() && seedRadius == 0) {
-            Set<Material> restricted = controller.getMaterialSet("restricted");
-            if (restricted.contains(targetMaterial.getMaterial())) {
+            MaterialSet restricted = controller.getMaterialSet("restricted");
+            if (restricted.testMaterialAndData(targetMaterial)) {
                 return SpellResult.FAIL;
             }
 
@@ -73,7 +75,7 @@ public class AnimateSpell extends SimulateSpell
                 String customRestricted = parameters.getString("restricted");
                 if (customRestricted != null && customRestricted.length() > 0 && !customRestricted.equals("restricted")) {
                     restricted = controller.getMaterialSet(customRestricted);
-                    if (restricted.contains(targetMaterial.getMaterial())) {
+                    if (restricted.testMaterialAndData(targetMaterial)) {
                         return SpellResult.FAIL;
                     }
                 }

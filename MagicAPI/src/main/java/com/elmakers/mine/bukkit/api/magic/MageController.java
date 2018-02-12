@@ -6,13 +6,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
 
-import com.elmakers.mine.bukkit.api.block.CurrencyItem;
-import com.elmakers.mine.bukkit.api.block.MaterialAndData;
-import com.elmakers.mine.bukkit.api.entity.EntityData;
-import com.elmakers.mine.bukkit.api.item.ItemData;
-import com.elmakers.mine.bukkit.api.maps.MapController;
-import com.elmakers.mine.bukkit.api.wand.WandTemplate;
-import com.elmakers.mine.bukkit.api.wand.WandUpgradePath;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -23,17 +19,22 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.util.Vector;
 
 import com.elmakers.mine.bukkit.api.block.BlockList;
+import com.elmakers.mine.bukkit.api.block.CurrencyItem;
+import com.elmakers.mine.bukkit.api.block.MaterialAndData;
 import com.elmakers.mine.bukkit.api.block.Schematic;
 import com.elmakers.mine.bukkit.api.block.UndoList;
+import com.elmakers.mine.bukkit.api.entity.EntityData;
+import com.elmakers.mine.bukkit.api.item.ItemData;
+import com.elmakers.mine.bukkit.api.maps.MapController;
 import com.elmakers.mine.bukkit.api.spell.SpellCategory;
 import com.elmakers.mine.bukkit.api.spell.SpellTemplate;
 import com.elmakers.mine.bukkit.api.wand.LostWand;
 import com.elmakers.mine.bukkit.api.wand.Wand;
-import org.bukkit.util.Vector;
-
-import javax.annotation.Nonnull;
+import com.elmakers.mine.bukkit.api.wand.WandTemplate;
+import com.elmakers.mine.bukkit.api.wand.WandUpgradePath;
 
 /**
  * The controller is used for more advanced plugin interaction, and is
@@ -121,7 +122,36 @@ public interface MageController {
     int getMaxUndoPersistSize();
 
     Schematic loadSchematic(String name);
-    Set<Material> getMaterialSet(String name);
+
+    /**
+     * @return An unmodifiable collection of the keys of the available material
+     *         sets.
+     */
+    Collection<String> getMaterialSets();
+
+    /**
+     * Looks up a material set by its name.
+     *
+     * @param name
+     *            The name of the material set. One of
+     *            {@link #getMaterialSets()}.
+     * @return The material set, or null when it is not available.
+     */
+    @Nullable
+    MaterialSet getMaterialSet(String name);
+
+    /**
+     * Looks up a material set by its name and if no material set is available a
+     * new one is created using the name.
+     *
+     * @param name
+     *            The name of the material set.
+     * @return The material set.
+     * @throws IllegalArgumentException
+     *             When the name is null or empty.
+     */
+    MaterialSet getOrCreateMaterialSet(String name)
+            throws IllegalArgumentException;
 
     void sendToMages(String message, Location location);
     Collection<Mage> getMages();
@@ -141,11 +171,9 @@ public interface MageController {
     String getDestructibleMaterials(Mage mage, Location location);
     Set<String> getSpellOverrides(Mage mage, Location location);
 
-    Set<Material> getDestructibleMaterials();
-    Set<Material> getBuildingMaterials();
-    Set<Material> getRestrictedMaterials();
-
-    Collection<String> getMaterialSets();
+    MaterialSet getDestructibleMaterials();
+    MaterialSet getBuildingMaterials();
+    MaterialSet getRestrictedMaterials();
 
     Collection<String> getPlayerNames();
 

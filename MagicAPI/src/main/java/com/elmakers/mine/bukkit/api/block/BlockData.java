@@ -1,11 +1,10 @@
 package com.elmakers.mine.bukkit.api.block;
 
-import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.util.BlockVector;
 
-import java.util.Set;
+import com.elmakers.mine.bukkit.api.magic.MaterialSet;
 
 /**
  * Stores a cached Block. Stores the coordinates and world, but will look up a block reference on demand.
@@ -39,5 +38,5 @@ public interface BlockData extends MaterialAndData {
     UndoList getUndoList();
     void setUndoList(UndoList undoList);
     BlockVector getLocation();
-    boolean containsAny(Set<Material> materials);
+    boolean containsAny(MaterialSet materials);
 }

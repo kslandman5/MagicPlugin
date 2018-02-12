@@ -77,6 +77,7 @@ import org.bukkit.util.Vector;
 import com.elmakers.mine.bukkit.api.batch.Batch;
 import com.elmakers.mine.bukkit.api.block.UndoList;
 import com.elmakers.mine.bukkit.api.magic.MageController;
+import com.elmakers.mine.bukkit.api.magic.MaterialSet;
 import com.elmakers.mine.bukkit.api.spell.CostReducer;
 import com.elmakers.mine.bukkit.api.spell.MageSpell;
 import com.elmakers.mine.bukkit.api.spell.Spell;
@@ -101,7 +102,6 @@ public class Mage implements CostReducer, com.elmakers.mine.bukkit.api.magic.Mag
     public static int OFFHAND_CAST_COOLDOWN = 500;
     public static boolean DEACTIVATE_WAND_ON_WORLD_CHANGE = false;
     public static int DEFAULT_SP = 0;
-    final static private Set<Material> EMPTY_MATERIAL_SET = new HashSet<>();
     private static String defaultMageName = "Mage";
     private static String SKILL_POINT_KEY = "sp";
 
@@ -1858,10 +1858,20 @@ public class Mage implements CostReducer, com.elmakers.mine.bukkit.api.magic.Mag
     }
 
     @Override
+    @Deprecated
     public boolean isRestricted(Material material) {
         Player player = getPlayer();
-        if (player != null && player.hasPermission("Magic.bypass_restricted")) return false;
+        if (player != null && player.hasPermission("Magic.bypass_restricted"))
+            return false;
         return controller.isRestricted(material);
+    }
+
+    @Override
+    public boolean isRestricted(Material material, Short data) {
+        Player player = getPlayer();
+        if (player != null && player.hasPermission("Magic.bypass_restricted"))
+            return false;
+        return controller.isRestricted(material, data);
     }
 
     @Override
@@ -1870,9 +1880,9 @@ public class Mage implements CostReducer, com.elmakers.mine.bukkit.api.magic.Mag
     }
 
     @Override
-    public Set<Material> getRestrictedMaterials() {
+    public MaterialSet getRestrictedMaterials() {
         if (isSuperPowered()) {
-            return EMPTY_MATERIAL_SET;
+            return MaterialSets.empty();
         }
         return controller.getRestrictedMaterials();
     }

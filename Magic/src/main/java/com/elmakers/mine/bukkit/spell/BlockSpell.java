@@ -2,12 +2,14 @@ package com.elmakers.mine.bukkit.spell;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
 
+import javax.annotation.Nonnull;
+
+import com.elmakers.mine.bukkit.api.block.MaterialAndData;
+import com.elmakers.mine.bukkit.api.magic.MaterialSet;
 import com.elmakers.mine.bukkit.block.UndoList;
+import com.elmakers.mine.bukkit.magic.MaterialSets;
 import com.elmakers.mine.bukkit.utility.CompatibilityUtils;
-import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.configuration.ConfigurationSection;
@@ -15,11 +17,11 @@ import org.bukkit.entity.Player;
 
 public abstract class BlockSpell extends UndoableSpell {
 
-    private Set<Material>	indestructible;
-    private Set<Material>	destructible;
-    private Set<Material>	destructibleOverride;
-    protected boolean 		checkDestructible 		= true;
-    protected float         destructibleDurability = 0.0f;
+    private MaterialSet     indestructible;
+    private MaterialSet     destructible;
+    private MaterialSet     destructibleOverride;
+    protected boolean       checkDestructible       = true;
+    protected float         destructibleDurability  = 0.0f;
 
     public final static String[] BLOCK_PARAMETERS = {
         "indestructible", "destructible", "check_destructible", "bypass_undo", "undo", "destructible_durability"
@@ -34,7 +36,7 @@ public abstract class BlockSpell extends UndoableSpell {
         if (indestructible == null) {
             return mage.isIndestructible(block);
         }
-        return indestructible.contains(block.getType()) || mage.isIndestructible(block);
+        return indestructible.testBlock(block) || mage.isIndestructible(block);
     }
 
     public boolean isDestructible(Block block)
@@ -42,16 +44,17 @@ public abstract class BlockSpell extends UndoableSpell {
         if (isIndestructible(block)) return false;
 
         if (!checkDestructible) return true;
-        if (destructibleOverride != null && destructibleOverride.contains(block.getType())) return true;
+        if (destructibleOverride != null && destructibleOverride.testBlock(block)) return true;
         if (destructibleDurability > 0 && CompatibilityUtils.getDurability(block.getType()) > destructibleDurability) return false;
         if (targetBreakables > 0 && currentCast.isBreakable(block)) return true;
         if (destructible == null) {
             return mage.isDestructible(block);
         }
-        return destructible.contains(block.getType());
+        return destructible.testBlock(block);
     }
 
-    public Set<Material> getDestructible() {
+    @Nonnull
+    public MaterialSet getDestructible() {
         if (destructible != null) return destructible;
         return controller.getDestructibleMaterials();
     }
@@ -62,14 +65,14 @@ public abstract class BlockSpell extends UndoableSpell {
 
         if (!checkDestructible) return true;
         if (targetBreakables > 0 && currentCast.isBreakable(block)) return true;
-        Set<Material> allDestructible = destructible;
+        MaterialSet allDestructible = destructible;
         if (allDestructible == null) {
             allDestructible = controller.getDestructibleMaterials();
         }
         if (allDestructible == null) {
             return true;
         }
-        if (allDestructible.contains(block.getType())) return true;
+        if (allDestructible.testBlock(block)) return true;
         com.elmakers.mine.bukkit.api.block.BlockData blockData = UndoList.getBlockData(block.getLocation());
         if (blockData == null || !blockData.containsAny(allDestructible)) {
             return false;
@@ -77,18 +80,9 @@ public abstract class BlockSpell extends UndoableSpell {
         return true;
     }
 
-    protected void setDestructible(Set<Material> materials) {
-        checkDestructible = true;
-        destructible = materials;
-    }
-
-    protected void addDestructible(Material material) {
-        Set<Material> current = getDestructible();
-        destructible = new HashSet<>();
-        if (current != null) {
-            destructible.addAll(current);
-        }
-        destructible.add(material);
+    protected void addDestructible(MaterialAndData material) {
+        MaterialSet current = getDestructible();
+        destructible = MaterialSets.union(current, material);
     }
 
     @Override
