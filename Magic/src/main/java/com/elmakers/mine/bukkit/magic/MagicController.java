@@ -3132,11 +3132,26 @@ public class MagicController implements MageController {
                 name != null && !name.isEmpty(),
                 "Invalid key: %s", name);
 
+        return getOrCreateMaterialSet0(name);
+    }
+
+    @Override
+    public MaterialSet getOrCreateMaterialSetNullable(String name) {
+        if (name == null || name.isEmpty()) {
+            return null;
+        }
+
+        return getOrCreateMaterialSet0(name);
+    }
+
+    @Nonnull
+    private MaterialSet getOrCreateMaterialSet0(@Nonnull String name) {
         MaterialSet materials = materialSets.get(name);
         if (materials == null) {
             materials = createMaterialSetFromString(name);
             materialSets.put(name, materials);
         }
+
         return materials;
     }
 

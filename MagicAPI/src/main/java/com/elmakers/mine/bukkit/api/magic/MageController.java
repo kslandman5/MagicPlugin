@@ -150,7 +150,15 @@ public interface MageController {
      * @throws IllegalArgumentException
      *             When the name is null or empty.
      */
-    MaterialSet getOrCreateMaterialSet(String name)
+    @Nonnull
+    MaterialSet getOrCreateMaterialSet(@Nonnull String name)
+            throws IllegalArgumentException;
+
+    // Same as above, but returns null on invalid keys rather than throwing an
+    // exception
+    // TODO: Shorter method name
+    @Nullable
+    MaterialSet getOrCreateMaterialSetNullable(@Nullable String name)
             throws IllegalArgumentException;
 
     void sendToMages(String message, Location location);

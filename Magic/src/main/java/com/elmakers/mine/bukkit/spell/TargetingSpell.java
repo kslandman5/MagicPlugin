@@ -518,27 +518,27 @@ public abstract class TargetingSpell extends BaseSpell {
         instantBlockEffects = parameters.getBoolean("instant_block_effects", false);
 
         if (parameters.contains("transparent")) {
-            targetThroughMaterials = controller.getOrCreateMaterialSet(parameters.getString("transparent"));
+            targetThroughMaterials = controller.getOrCreateMaterialSetNullable(parameters.getString("transparent"));
         } else {
             targetThroughMaterials = controller.getMaterialSet("transparent");
         }
 
         if (parameters.contains("targetable")) {
-            targetableMaterials = controller.getOrCreateMaterialSet(parameters.getString("targetable"));
+            targetableMaterials = controller.getOrCreateMaterialSetNullable(parameters.getString("targetable"));
         } else {
             targetableMaterials = null;
         }
 
         reflectiveMaterials = null;
         if (parameters.contains("reflective")) {
-            reflectiveMaterials = controller.getOrCreateMaterialSet(parameters.getString("reflective"));
+            reflectiveMaterials = controller.getOrCreateMaterialSetNullable(parameters.getString("reflective"));
         }
 
         if (parameters.getBoolean("reflective_override", true)) {
             String reflectiveKey = controller.getReflectiveMaterials(mage, mage.getLocation());
             if (reflectiveKey != null) {
                 MaterialSet currentReflective = reflectiveMaterials;
-                reflectiveMaterials = controller.getOrCreateMaterialSet(reflectiveKey);
+                reflectiveMaterials = controller.getOrCreateMaterialSetNullable(reflectiveKey);
                 if (currentReflective != null) {
                     reflectiveMaterials = MaterialSets.union(
                             reflectiveMaterials, currentReflective);

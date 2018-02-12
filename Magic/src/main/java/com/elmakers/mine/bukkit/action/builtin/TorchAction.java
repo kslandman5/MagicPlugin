@@ -34,7 +34,7 @@ public class TorchAction extends BaseSpellAction
 	public void initialize(Spell spell, ConfigurationSection parameters)
 	{
 		super.initialize(spell, parameters);
-		slippery = spell.getController().getOrCreateMaterialSet(parameters.getString("not_attachable", "not_attachable"));
+		slippery = spell.getController().getOrCreateMaterialSetNullable(parameters.getString("not_attachable", "not_attachable"));
 	}
 
 	@Override
