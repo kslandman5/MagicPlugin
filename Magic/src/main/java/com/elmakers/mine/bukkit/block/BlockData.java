@@ -16,6 +16,7 @@ import com.elmakers.mine.bukkit.api.magic.MaterialSet;
 import com.elmakers.mine.bukkit.utility.ConfigurationUtils;
 
 import java.lang.ref.WeakReference;
+import java.util.Set;
 
 /**
  * Stores a cached Block. Stores the coordinates and world, but will look up a block reference on demand.
@@ -336,6 +337,18 @@ public class BlockData extends MaterialAndData implements com.elmakers.mine.bukk
     @Override
     public BlockVector getLocation() {
         return location;
+    }
+
+    @Override
+    @Deprecated
+    public boolean containsAny(Set<Material> materials) {
+        if (materials.contains(material)) {
+            return true;
+        } else if (priorState != null) {
+            return priorState.containsAny(materials);
+        }
+
+        return false;
     }
 
     @Override

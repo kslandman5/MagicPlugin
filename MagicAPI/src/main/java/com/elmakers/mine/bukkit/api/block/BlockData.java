@@ -1,5 +1,8 @@
 package com.elmakers.mine.bukkit.api.block;
 
+import java.util.Set;
+
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.util.BlockVector;
@@ -38,5 +41,7 @@ public interface BlockData extends MaterialAndData {
     UndoList getUndoList();
     void setUndoList(UndoList undoList);
     BlockVector getLocation();
+    @Deprecated
+    boolean containsAny(Set<Material> materials);
     boolean containsAny(MaterialSet materials);
 }

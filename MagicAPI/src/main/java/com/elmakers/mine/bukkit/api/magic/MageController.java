@@ -126,6 +126,10 @@ public interface MageController {
      * @return Manager of material sets.
      */
     MaterialSetManager getMaterialSetManager();
+    @Deprecated
+    Collection<String> getMaterialSets();
+    @Deprecated
+    Set<Material> getMaterialSet(String string);
 
     void sendToMages(String message, Location location);
     Collection<Mage> getMages();
@@ -145,9 +149,13 @@ public interface MageController {
     String getDestructibleMaterials(Mage mage, Location location);
     Set<String> getSpellOverrides(Mage mage, Location location);
 
-    MaterialSet getDestructibleMaterials();
-    MaterialSet getBuildingMaterials();
-    MaterialSet getRestrictedMaterials();
+    Set<Material> getDestructibleMaterials();
+    Set<Material> getBuildingMaterials();
+    Set<Material> getRestrictedMaterials();
+
+    MaterialSet getDestructibleMaterialSet();
+    MaterialSet getBuildingMaterialSet();
+    MaterialSet getRestrictedMaterialSet();
 
     Collection<String> getPlayerNames();
 

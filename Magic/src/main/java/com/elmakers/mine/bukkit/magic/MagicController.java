@@ -3125,24 +3125,39 @@ public class MagicController implements MageController {
         return Collections.unmodifiableCollection(values);
     }
 
-	@Override
-	public MaterialSet getBuildingMaterials()
-	{
-		return buildingMaterials;
-	}
+    @Override
+    @Deprecated
+    public Set<Material> getBuildingMaterials() {
+        return MaterialSets.toLegacy(buildingMaterials);
+    }
 
-	@Override
-	public MaterialSet getDestructibleMaterials()
-	{
-		return destructibleMaterials;
-	}
+    @Override
+    @Deprecated
+    public Set<Material> getDestructibleMaterials() {
+        return MaterialSets.toLegacy(destructibleMaterials);
+    }
 
-	@Override
-	public MaterialSet getRestrictedMaterials()
-	{
-		return restrictedMaterials;
-	}
-	
+    @Override
+    @Deprecated
+    public Set<Material> getRestrictedMaterials() {
+        return MaterialSets.toLegacy(restrictedMaterials);
+    }
+
+    @Override
+    public MaterialSet getBuildingMaterialSet() {
+        return buildingMaterials;
+    }
+
+    @Override
+    public MaterialSet getDestructibleMaterialSet() {
+        return destructibleMaterials;
+    }
+
+    @Override
+    public MaterialSet getRestrictedMaterialSet() {
+        return restrictedMaterials;
+    }
+
 	@Override
 	public int getMessageThrottle()
 	{
@@ -3159,6 +3174,18 @@ public class MagicController implements MageController {
     @Override
     public MaterialSetManager getMaterialSetManager() {
         return materialSetManager;
+    }
+
+    @Override
+    @Deprecated
+    public Collection<String> getMaterialSets() {
+        return getMaterialSetManager().getMaterialSets();
+    }
+
+    @Override
+    @Deprecated
+    public Set<Material> getMaterialSet(String string) {
+        return MaterialSets.toLegacy(getMaterialSetManager().fromConfig(string));
     }
 
 	@Override

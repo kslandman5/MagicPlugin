@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Set;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -21,11 +22,12 @@ import com.google.common.collect.ImmutableSet;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkArgument;
 
-/**
- * We need a separate utility class as java 7 does not support static methods in
- * interfaces.
- */
 public class MaterialSets {
+    @Nullable
+    public static Set<Material> toLegacy(@Nullable MaterialSet v) {
+        return v == null ? null : ImmutableSet.copyOf(v.getMaterials());
+    }
+
     private static enum WildcardMaterialSet implements MaterialSet {
         INSTANCE;
 

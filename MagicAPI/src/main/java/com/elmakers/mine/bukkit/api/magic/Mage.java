@@ -395,7 +395,9 @@ public interface Mage extends CostReducer {
     // Used for checking if a brush is restricted
     // TODO: Pass some kind of proper data class instead
     boolean isRestricted(Material material, @Nullable Short data);
-    MaterialSet getRestrictedMaterials();
+    @Deprecated
+    Set<Material> getRestrictedMaterials();
+    MaterialSet getRestrictedMaterialSet();
 
     MageController getController();
     boolean hasCastPermission(Spell spell);

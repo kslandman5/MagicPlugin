@@ -1880,11 +1880,17 @@ public class Mage implements CostReducer, com.elmakers.mine.bukkit.api.magic.Mag
     }
 
     @Override
-    public MaterialSet getRestrictedMaterials() {
+    @Deprecated
+    public Set<Material> getRestrictedMaterials() {
+        return MaterialSets.toLegacy(getRestrictedMaterialSet());
+    }
+
+    @Override
+    public MaterialSet getRestrictedMaterialSet() {
         if (isSuperPowered()) {
             return MaterialSets.empty();
         }
-        return controller.getRestrictedMaterials();
+        return controller.getRestrictedMaterialSet();
     }
 
     @Override

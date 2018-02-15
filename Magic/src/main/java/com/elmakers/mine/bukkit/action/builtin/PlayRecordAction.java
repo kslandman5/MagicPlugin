@@ -2,16 +2,16 @@ package com.elmakers.mine.bukkit.action.builtin;
 
 import com.elmakers.mine.bukkit.action.BaseSpellAction;
 import com.elmakers.mine.bukkit.api.action.CastContext;
-import com.elmakers.mine.bukkit.api.magic.MaterialSet;
 import com.elmakers.mine.bukkit.api.spell.SpellResult;
-import com.google.common.collect.Lists;
+import com.elmakers.mine.bukkit.utility.DeprecatedUtils;
+import com.google.common.collect.Iterables;
 
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 
-import java.util.List;
+import java.util.Collection;
 import java.util.Random;
 
 public class PlayRecordAction extends BaseSpellAction
@@ -25,25 +25,23 @@ public class PlayRecordAction extends BaseSpellAction
         recordList = parameters.getString("records", "records");
     }
 	
-	@SuppressWarnings("deprecation")
 	@Override
     public SpellResult perform(CastContext context) {
-        MaterialSet recordSet = context.getMaterialSet(recordList);
-        if (recordSet == null) {
+        Collection<Material> records = context.getController()
+                .getMaterialSetManager()
+                .fromConfigEmpty(recordList)
+                .getMaterials();
+        if (records.isEmpty()) {
             return SpellResult.FAIL;
         }
 
-        List<Material> records = Lists.newArrayList(recordSet.getMaterials());
-        if (records.size() == 0) {
-            return SpellResult.FAIL;
-        }
 
         Random random = context.getRandom();
-        Material record = records.get(random.nextInt(records.size()));
+        Material record = Iterables.get(records, random.nextInt(records.size()));
 
         Location location = context.getTargetLocation();
         location.getWorld().playEffect(location, Effect.RECORD_PLAY,
-                record.getId());
+                DeprecatedUtils.getId(record));
 
         return SpellResult.CAST;
     }

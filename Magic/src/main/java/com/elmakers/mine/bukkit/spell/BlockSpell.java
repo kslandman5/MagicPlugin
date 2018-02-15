@@ -54,7 +54,7 @@ public abstract class BlockSpell extends UndoableSpell {
     @Nonnull
     public MaterialSet getDestructible() {
         if (destructible != null) return destructible;
-        return controller.getDestructibleMaterials();
+        return controller.getDestructibleMaterialSet();
     }
 
     public boolean areAnyDestructible(Block block)
@@ -65,7 +65,7 @@ public abstract class BlockSpell extends UndoableSpell {
         if (targetBreakables > 0 && currentCast.isBreakable(block)) return true;
         MaterialSet allDestructible = destructible;
         if (allDestructible == null) {
-            allDestructible = controller.getDestructibleMaterials();
+            allDestructible = controller.getDestructibleMaterialSet();
         }
         if (allDestructible == null) {
             return true;

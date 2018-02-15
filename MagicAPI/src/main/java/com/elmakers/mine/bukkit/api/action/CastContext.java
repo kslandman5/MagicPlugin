@@ -26,7 +26,6 @@ import com.elmakers.mine.bukkit.api.effect.EffectPlayer;
 import com.elmakers.mine.bukkit.api.magic.Mage;
 import com.elmakers.mine.bukkit.api.magic.MageClass;
 import com.elmakers.mine.bukkit.api.magic.MageController;
-import com.elmakers.mine.bukkit.api.magic.MaterialSet;
 import com.elmakers.mine.bukkit.api.spell.Spell;
 import com.elmakers.mine.bukkit.api.spell.SpellResult;
 import com.elmakers.mine.bukkit.api.spell.TargetType;
@@ -162,8 +161,8 @@ public interface CastContext {
     boolean isOkToStandOn(Material mat);
     boolean isOkToStandOn(Block block);
     @Nullable
-    @Deprecated // Call controller directly
-    MaterialSet getMaterialSet(String key);
+    @Deprecated
+    Set<Material> getMaterialSet(String key);
     void setSpellParameters(ConfigurationSection parameters);
     SpellResult getResult();
     void setResult(SpellResult result);

@@ -29,8 +29,8 @@ public class AbsorbAction extends BaseSpellAction
 		Material material = target.getType();
 		byte data = target.getData();
 
-		MaterialSet buildingMaterials = controller.getBuildingMaterials();
-		MaterialSet restrictedMaterials = mage.getRestrictedMaterials();
+		MaterialSet buildingMaterials = controller.getBuildingMaterialSet();
+		MaterialSet restrictedMaterials = mage.getRestrictedMaterialSet();
 		if (material == null || material == Material.AIR)
 		{
 			return SpellResult.NO_TARGET;
