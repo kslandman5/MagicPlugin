@@ -1650,7 +1650,7 @@ public abstract class BaseSpell implements MageSpell, Cloneable {
         passthroughMaterials = materials.getMaterialSetEmpty("passthrough");
         if (parameters.contains("passthrough")) {
             passthroughMaterials = materials.fromConfig(
-                    parameters.getString("passthrough"), 
+                    parameters.getString("passthrough"),
                     passthroughMaterials);
         }
 
