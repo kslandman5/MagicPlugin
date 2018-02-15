@@ -5,6 +5,7 @@ import com.elmakers.mine.bukkit.api.block.BlockData;
 import com.elmakers.mine.bukkit.api.magic.Mage;
 import com.elmakers.mine.bukkit.api.magic.MageController;
 import com.elmakers.mine.bukkit.api.magic.MaterialSet;
+import com.elmakers.mine.bukkit.api.magic.MaterialSetManager;
 import com.elmakers.mine.bukkit.block.UndoList;
 import com.elmakers.mine.bukkit.magic.MaterialSets;
 
@@ -31,12 +32,13 @@ public class UndoBatch implements com.elmakers.mine.bukkit.api.batch.UndoBatch {
             context.playEffects("undo");
         }
 
+        MaterialSetManager materialSets = controller.getMaterialSetManager();
         MaterialSets.Union union = MaterialSets.unionBuilder();
         for (MaterialSet addToAttachables : new MaterialSet[] {
-                controller.getMaterialSet("attachable"),
-                controller.getMaterialSet("attachable_wall"),
-                controller.getMaterialSet("attachable_double"),
-                controller.getMaterialSet("delayed"),
+                materialSets.getMaterialSetEmpty("attachable"),
+                materialSets.getMaterialSetEmpty("attachable_wall"),
+                materialSets.getMaterialSetEmpty("attachable_double"),
+                materialSets.getMaterialSetEmpty("delayed"),
         }) {
             if (addToAttachables != null) {
                 union.add(addToAttachables);

@@ -3,6 +3,7 @@ package com.elmakers.mine.bukkit.spell;
 import com.elmakers.mine.bukkit.api.action.CastContext;
 import com.elmakers.mine.bukkit.api.magic.Mage;
 import com.elmakers.mine.bukkit.api.magic.MaterialSet;
+import com.elmakers.mine.bukkit.api.magic.MaterialSetManager;
 import com.elmakers.mine.bukkit.api.spell.TargetType;
 import com.elmakers.mine.bukkit.block.MaterialAndData;
 import com.elmakers.mine.bukkit.block.MaterialBrush;
@@ -35,6 +36,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
+import javax.annotation.Nonnull;
+
 public abstract class TargetingSpell extends BaseSpell {
     // This differs from CompatibilityUtils.MAX_ENTITY_RANGE,
     // block targeting can theoretically go farther
@@ -65,9 +68,9 @@ public abstract class TargetingSpell extends BaseSpell {
 
     private boolean                             allowMaxRange           = false;
 
-    private MaterialSet                         targetThroughMaterials  = MaterialSets.empty();
-    private MaterialSet                         targetableMaterials     = null;
-    private MaterialSet                         reflectiveMaterials     = MaterialSets.empty();
+    private @Nonnull MaterialSet                targetThroughMaterials  = MaterialSets.empty();
+    private @Nonnull MaterialSet                targetableMaterials     = MaterialSets.empty();
+    private @Nonnull MaterialSet                reflectiveMaterials     = MaterialSets.empty();
     private boolean                             reverseTargeting        = false;
     private boolean                             originAtTarget          = false;
 
@@ -136,10 +139,8 @@ public abstract class TargetingSpell extends BaseSpell {
         boolean targetThrough = targetThroughMaterials.testBlock(block);
         if (reverseTargeting) {
             return targetThrough;
-        } else if (!targetThrough && targetableMaterials != null) {
-            return targetableMaterials.testBlock(block);
         } else {
-            return !targetThrough;
+            return !targetThrough && targetableMaterials.testBlock(block);
         }
     }
 
@@ -517,32 +518,23 @@ public abstract class TargetingSpell extends BaseSpell {
         reverseTargeting = parameters.getBoolean("reverse_targeting", false);
         instantBlockEffects = parameters.getBoolean("instant_block_effects", false);
 
-        if (parameters.contains("transparent")) {
-            targetThroughMaterials = controller.getOrCreateMaterialSetNullable(parameters.getString("transparent"));
-        } else {
-            targetThroughMaterials = controller.getMaterialSet("transparent");
-        }
+        MaterialSetManager materials = controller.getMaterialSetManager();
+        targetThroughMaterials = MaterialSets.empty();
+        targetThroughMaterials = materials.getMaterialSet("transparent", targetThroughMaterials);
+        targetThroughMaterials = materials.fromConfig(parameters.getString("transparent"), targetThroughMaterials);
 
-        if (parameters.contains("targetable")) {
-            targetableMaterials = controller.getOrCreateMaterialSetNullable(parameters.getString("targetable"));
-        } else {
-            targetableMaterials = null;
-        }
+        targetableMaterials = MaterialSets.empty();
+        targetableMaterials = materials.fromConfig(parameters.getString("targetable"), targetableMaterials);
 
-        reflectiveMaterials = null;
-        if (parameters.contains("reflective")) {
-            reflectiveMaterials = controller.getOrCreateMaterialSetNullable(parameters.getString("reflective"));
-        }
+        reflectiveMaterials = MaterialSets.empty();
+        reflectiveMaterials = materials.fromConfig(parameters.getString("reflective"), reflectiveMaterials);
 
         if (parameters.getBoolean("reflective_override", true)) {
             String reflectiveKey = controller.getReflectiveMaterials(mage, mage.getLocation());
             if (reflectiveKey != null) {
-                MaterialSet currentReflective = reflectiveMaterials;
-                reflectiveMaterials = controller.getOrCreateMaterialSetNullable(reflectiveKey);
-                if (currentReflective != null) {
-                    reflectiveMaterials = MaterialSets.union(
-                            reflectiveMaterials, currentReflective);
-                }
+                reflectiveMaterials = MaterialSets.union(
+                        materials.fromConfigEmpty(reflectiveKey),
+                        reflectiveMaterials);
             }
         }
 

@@ -17,7 +17,9 @@ public class CheckBlockAction extends CompoundAction {
     public void initialize(Spell spell, ConfigurationSection parameters)
     {
         super.initialize(spell, parameters);
-        allowed = spell.getController().getOrCreateMaterialSetNullable(parameters.getString("allowed"));
+
+        allowed = spell.getController().getMaterialSetManager()
+                .fromConfig(parameters.getString("allowed"));
     }
     
     protected boolean isAllowed(CastContext context) {

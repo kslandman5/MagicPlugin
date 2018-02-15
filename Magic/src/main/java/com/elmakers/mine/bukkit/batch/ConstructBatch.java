@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.annotation.Nonnull;
+
 import com.elmakers.mine.bukkit.api.block.MaterialAndData;
 import com.elmakers.mine.bukkit.block.UndoList;
 import com.elmakers.mine.bukkit.utility.SafetyUtils;
@@ -30,6 +32,7 @@ import org.bukkit.util.Vector;
 
 import com.elmakers.mine.bukkit.api.block.MaterialBrush;
 import com.elmakers.mine.bukkit.api.magic.MaterialSet;
+import com.elmakers.mine.bukkit.api.magic.MaterialSetManager;
 import com.elmakers.mine.bukkit.block.BlockData;
 import com.elmakers.mine.bukkit.block.ConstructionType;
 import com.elmakers.mine.bukkit.spell.BrushSpell;
@@ -47,10 +50,10 @@ public class ConstructBatch extends BrushBatch {
 	private final Map<Long, BlockData> attachedBlockMap = new HashMap<>();
 	private final List<BlockData> attachedBlockList = new ArrayList<>();
 	private final List<BlockData> delayedBlocks = new ArrayList<>();
-	private final MaterialSet attachables;
-	private final MaterialSet attachablesWall;
-	private final MaterialSet attachablesDouble;
-	private final MaterialSet delayed;
+	private final @Nonnull MaterialSet attachables;
+	private final @Nonnull MaterialSet attachablesWall;
+	private final @Nonnull MaterialSet attachablesDouble;
+	private final @Nonnull MaterialSet delayed;
 	private Set<String> replace;
 	private Map<String, String> commandMap;
 
@@ -84,10 +87,12 @@ public class ConstructBatch extends BrushBatch {
 		this.type = type;
 		this.thickness = thickness;
 		this.spawnFallingBlocks = spawnFallingBlocks;
-		this.attachables = mage.getController().getMaterialSet("attachable");
-		this.attachablesWall = mage.getController().getMaterialSet("attachable_wall");
-		this.attachablesDouble = mage.getController().getMaterialSet("attachable_double");
-		this.delayed = mage.getController().getMaterialSet("delayed");
+
+		MaterialSetManager materials = mage.getController().getMaterialSetManager();
+		this.attachables = materials.getMaterialSetEmpty("attachable");
+		this.attachablesWall = materials.getMaterialSetEmpty("attachable_wall");
+		this.attachablesDouble = materials.getMaterialSetEmpty("attachable_double");
+		this.delayed = materials.getMaterialSetEmpty("delayed");
         this.orient = orientVector == null ? new Vector(0, 1, 0) : orientVector;
 	}
 

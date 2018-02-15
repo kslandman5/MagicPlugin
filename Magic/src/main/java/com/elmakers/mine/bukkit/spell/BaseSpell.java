@@ -67,6 +67,7 @@ import org.bukkit.util.Vector;
 import com.elmakers.mine.bukkit.api.magic.Mage;
 import com.elmakers.mine.bukkit.api.magic.MageController;
 import com.elmakers.mine.bukkit.api.magic.MaterialSet;
+import com.elmakers.mine.bukkit.api.magic.MaterialSetManager;
 import com.elmakers.mine.bukkit.api.spell.SpellCategory;
 import com.elmakers.mine.bukkit.block.MaterialAndData;
 import com.elmakers.mine.bukkit.effect.EffectPlayer;
@@ -1638,22 +1639,26 @@ public abstract class BaseSpell implements MageSpell, Cloneable {
         cancelOnNoPermission = parameters.getBoolean("cancel_on_no_permission", false);
         commandBlockAllowed = parameters.getBoolean("command_block_allowed", true);
 
+        MaterialSetManager materials = controller.getMaterialSetManager();
+        preventPassThroughMaterials = materials.getMaterialSetEmpty("indestructible");
         if (parameters.contains("prevent_passthrough")) {
-            preventPassThroughMaterials = controller.getMaterialSet(parameters.getString("prevent_passthrough"));
-        } else {
-            preventPassThroughMaterials = controller.getMaterialSet("indestructible");
+            preventPassThroughMaterials = materials.fromConfig(
+                    parameters.getString("prevent_passthrough"),
+                    preventPassThroughMaterials);
         }
 
+        passthroughMaterials = materials.getMaterialSetEmpty("passthrough");
         if (parameters.contains("passthrough")) {
-            passthroughMaterials = controller.getMaterialSet(parameters.getString("passthrough"));
-        } else {
-            passthroughMaterials = controller.getMaterialSet("passthrough");
+            passthroughMaterials = materials.fromConfig(
+                    parameters.getString("passthrough"), 
+                    passthroughMaterials);
         }
 
+        unsafeMaterials = materials.getMaterialSetEmpty("unsafe");
         if (parameters.contains("unsafe")) {
-            unsafeMaterials = controller.getMaterialSet(parameters.getString("unsafe"));
-        } else {
-            unsafeMaterials = controller.getMaterialSet("unsafe");
+            unsafeMaterials = materials.fromConfig(
+                    parameters.getString("unsafe"),
+                    unsafeMaterials);
         }
 
         bypassDeactivate = parameters.getBoolean("bypass_deactivate", false);
@@ -2017,7 +2022,7 @@ public abstract class BaseSpell implements MageSpell, Cloneable {
         } else if (parameterKey.equals("range")) {
             examples.addAll(Arrays.asList(EXAMPLE_SIZES));
         } else if (parameterKey.equals("transparent")) {
-            examples.addAll(controller.getMaterialSets());
+            examples.addAll(controller.getMaterialSetManager().getMaterialSets());
         } else if (parameterKey.equals("player")) {
             examples.addAll(controller.getPlayerNames());
         } else if (parameterKey.equals("target")) {

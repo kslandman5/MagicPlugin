@@ -162,6 +162,7 @@ public interface CastContext {
     boolean isOkToStandOn(Material mat);
     boolean isOkToStandOn(Block block);
     @Nullable
+    @Deprecated // Call controller directly
     MaterialSet getMaterialSet(String key);
     void setSpellParameters(ConfigurationSection parameters);
     SpellResult getResult();

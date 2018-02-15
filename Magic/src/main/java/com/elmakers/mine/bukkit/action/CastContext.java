@@ -1118,8 +1118,11 @@ public class CastContext implements com.elmakers.mine.bukkit.api.action.CastCont
     }
 
     @Override
+    @Deprecated
     public MaterialSet getMaterialSet(String key) {
-        return getController().getMaterialSet(key);
+        // For backwards compatibility we use fromConfig to preserve
+        // old behavior
+        return getController().getMaterialSetManager().fromConfig(key);
     }
 
     @Override

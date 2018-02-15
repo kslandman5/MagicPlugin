@@ -262,6 +262,13 @@ public class MaterialSets {
     }
 
     public static MaterialSet union(MaterialSet left, MaterialSet right) {
+        // Happy path
+        if (left == empty()) {
+            return right;
+        } else if (right == empty()) {
+            return left;
+        }
+
         return unionBuilder().add(left).add(right).build();
     }
 

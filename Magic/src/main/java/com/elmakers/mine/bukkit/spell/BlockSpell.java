@@ -7,6 +7,7 @@ import javax.annotation.Nonnull;
 
 import com.elmakers.mine.bukkit.api.block.MaterialAndData;
 import com.elmakers.mine.bukkit.api.magic.MaterialSet;
+import com.elmakers.mine.bukkit.api.magic.MaterialSetManager;
 import com.elmakers.mine.bukkit.block.UndoList;
 import com.elmakers.mine.bukkit.magic.MaterialSets;
 import com.elmakers.mine.bukkit.utility.CompatibilityUtils;
@@ -17,7 +18,7 @@ import org.bukkit.entity.Player;
 
 public abstract class BlockSpell extends UndoableSpell {
 
-    private MaterialSet     indestructible;
+    private @Nonnull MaterialSet     indestructible = MaterialSets.empty();
     private MaterialSet     destructible;
     private MaterialSet     destructibleOverride;
     protected boolean       checkDestructible       = true;
@@ -33,9 +34,6 @@ public abstract class BlockSpell extends UndoableSpell {
         Player player = mage.getPlayer();
         if (player != null && player.hasPermission("Magic.bypass")) return false;
         if (controller.isLocked(block)) return true;
-        if (indestructible == null) {
-            return mage.isIndestructible(block);
-        }
         return indestructible.testBlock(block) || mage.isIndestructible(block);
     }
 
@@ -88,24 +86,25 @@ public abstract class BlockSpell extends UndoableSpell {
     @Override
     public void processParameters(ConfigurationSection parameters) {
         super.processParameters(parameters);
-        indestructible = null;
-        if (parameters.contains("indestructible")) {
-            indestructible = controller.getMaterialSet(parameters.getString("indestructible"));
-        }
-        if (parameters.contains("id")) {
-            indestructible = controller.getMaterialSet(parameters.getString("id"));
-        }
-        destructible = null;
-        if (parameters.contains("destructible")) {
-            destructible = controller.getMaterialSet(parameters.getString("destructible"));
-        }
+
+        MaterialSetManager materials = controller.getMaterialSetManager();
+        indestructible = MaterialSets.empty();
+        indestructible = materials.fromConfig( // Legacy
+                parameters.getString("id"), 
+                indestructible);
+        indestructible = materials.fromConfig(
+                parameters.getString("indestructible"), 
+                indestructible);
+
+        destructible = materials.fromConfig(parameters.getString("destructible"));
 
         if (parameters.getBoolean("destructible_override", false)) {
             String destructibleKey = controller.getDestructibleMaterials(mage, mage.getLocation());
-            destructibleOverride = destructibleKey == null ? null : controller.getMaterialSet(destructibleKey);
+            destructibleOverride = destructibleKey == null ? null : materials.fromConfig(destructibleKey);
         } else {
             destructibleOverride = null;
         }
+
         checkDestructible = parameters.getBoolean("check_destructible", true);
         checkDestructible = parameters.getBoolean("cd", checkDestructible);
         destructibleDurability = (float)parameters.getDouble("destructible_durability", 0.0);
@@ -133,7 +132,7 @@ public abstract class BlockSpell extends UndoableSpell {
             examples.addAll(Arrays.asList(EXAMPLE_DURATIONS));
         }
         else if (parameterKey.equals("indestructible") || parameterKey.equals("destructible")) {
-            examples.addAll(controller.getMaterialSets());
+            examples.addAll(controller.getMaterialSetManager().getMaterialSets());
         } else if (parameterKey.equals("check_destructible") || parameterKey.equals("bypass_undo")) {
             examples.addAll(Arrays.asList(EXAMPLE_BOOLEANS));
         }

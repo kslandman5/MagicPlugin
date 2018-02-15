@@ -32,7 +32,7 @@ public class DropSpell extends BlockSpell
 			return SpellResult.NO_TARGET;
 		}
 
-		MaterialSet dropMaterials = controller.getMaterialSet(parameters.getString("drop"));
+		MaterialSet dropMaterials = controller.getMaterialSetManager().fromConfigEmpty(parameters.getString("drop"));
 		if (!dropMaterials.testBlock(target))
 		{
 			return SpellResult.NO_TARGET;

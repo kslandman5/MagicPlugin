@@ -7,7 +7,6 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -124,42 +123,9 @@ public interface MageController {
     Schematic loadSchematic(String name);
 
     /**
-     * @return An unmodifiable collection of the keys of the available material
-     *         sets.
+     * @return Manager of material sets.
      */
-    Collection<String> getMaterialSets();
-
-    /**
-     * Looks up a material set by its name.
-     *
-     * @param name
-     *            The name of the material set. One of
-     *            {@link #getMaterialSets()}.
-     * @return The material set, or null when it is not available.
-     */
-    @Nullable
-    MaterialSet getMaterialSet(String name);
-
-    /**
-     * Looks up a material set by its name and if no material set is available a
-     * new one is created using the name.
-     *
-     * @param name
-     *            The name of the material set.
-     * @return The material set.
-     * @throws IllegalArgumentException
-     *             When the name is null or empty.
-     */
-    @Nonnull
-    MaterialSet getOrCreateMaterialSet(@Nonnull String name)
-            throws IllegalArgumentException;
-
-    // Same as above, but returns null on invalid keys rather than throwing an
-    // exception
-    // TODO: Shorter method name
-    @Nullable
-    MaterialSet getOrCreateMaterialSetNullable(@Nullable String name)
-            throws IllegalArgumentException;
+    MaterialSetManager getMaterialSetManager();
 
     void sendToMages(String message, Location location);
     Collection<Mage> getMages();

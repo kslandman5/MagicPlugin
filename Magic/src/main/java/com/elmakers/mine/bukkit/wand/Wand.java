@@ -2293,7 +2293,7 @@ public class Wand extends WandProperties implements CostReducer, com.elmakers.mi
 			item.setType(icon.getMaterial());
 			item.setDurability(icon.getData());
 		} else {
-			MaterialSet enchantableMaterials = controller.getMaterialSet("enchantable");
+			MaterialSet enchantableMaterials = controller.getMaterialSetManager().getMaterialSetEmpty("enchantable");
 			if (!enchantableMaterials.testItem(item)) {
 				item.setType(EnchantableWandMaterial);
 				item.setDurability((short) 0);

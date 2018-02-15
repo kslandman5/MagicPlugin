@@ -369,7 +369,7 @@ public class EntityController implements Listener {
         BlockData undoData = com.elmakers.mine.bukkit.block.UndoList.getBlockData(block.getLocation());
         boolean isBreaking = block.getType() != Material.AIR;
         if (!isBreaking) {
-            MaterialSet doubleAttachables = controller.getMaterialSet("attachable_double");
+            MaterialSet doubleAttachables = controller.getMaterialSetManager().getMaterialSetEmpty("attachable_double");
             isBreaking = doubleAttachables.testItem(spawnedItem);
         }
         if (undoData != null && isBreaking)

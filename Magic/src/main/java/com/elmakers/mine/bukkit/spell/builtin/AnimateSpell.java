@@ -10,6 +10,7 @@ import java.util.UUID;
 
 import com.elmakers.mine.bukkit.api.magic.Mage;
 import com.elmakers.mine.bukkit.api.magic.MaterialSet;
+import com.elmakers.mine.bukkit.api.magic.MaterialSetManager;
 import com.elmakers.mine.bukkit.api.magic.Messages;
 import com.elmakers.mine.bukkit.api.spell.Spell;
 import org.bukkit.Bukkit;
@@ -66,15 +67,16 @@ public class AnimateSpell extends SimulateSpell
 		}
 
         if (!mage.isSuperPowered() && seedRadius == 0) {
-            MaterialSet restricted = controller.getMaterialSet("restricted");
-            if (restricted.testMaterialAndData(targetMaterial)) {
+            MaterialSetManager materialSets = controller.getMaterialSetManager();
+            MaterialSet restricted = materialSets.getMaterialSet("restricted");
+            if (restricted != null && restricted.testMaterialAndData(targetMaterial)) {
                 return SpellResult.FAIL;
             }
 
             if (parameters.contains("restricted")) {
                 String customRestricted = parameters.getString("restricted");
-                if (customRestricted != null && customRestricted.length() > 0 && !customRestricted.equals("restricted")) {
-                    restricted = controller.getMaterialSet(customRestricted);
+                if (customRestricted != null && !customRestricted.equals("restricted")) {
+                    restricted = materialSets.fromConfigEmpty(customRestricted);
                     if (restricted.testMaterialAndData(targetMaterial)) {
                         return SpellResult.FAIL;
                     }

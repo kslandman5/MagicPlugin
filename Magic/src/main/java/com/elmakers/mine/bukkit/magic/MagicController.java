@@ -17,6 +17,7 @@ import com.elmakers.mine.bukkit.api.magic.Mage;
 import com.elmakers.mine.bukkit.api.magic.MageController;
 import com.elmakers.mine.bukkit.api.magic.MagicAPI;
 import com.elmakers.mine.bukkit.api.magic.MaterialSet;
+import com.elmakers.mine.bukkit.api.magic.MaterialSetManager;
 import com.elmakers.mine.bukkit.api.spell.CastingCost;
 import com.elmakers.mine.bukkit.api.spell.CostReducer;
 import com.elmakers.mine.bukkit.api.spell.MageSpell;
@@ -135,7 +136,6 @@ import java.security.MessageDigest;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -2107,53 +2107,32 @@ public class MagicController implements MageController {
     public Set<String> getSpellOverrides(Mage mage, Location location) {
         return worldGuardManager.getSpellOverrides(mage.getPlayer(), location);
     }
-	
-	protected void loadMaterials(ConfigurationSection materialNode)
-	{
-		if (materialNode == null) return;
 
-        // Create Material sets
-        Set<String> keys = materialNode.getKeys(false);
-        for (String key : keys) {
-            MaterialSet set = createMaterialSet(materialNode, key);
-            if (set != null) {
-                materialSets.put(key, set);
-            }
-        }
+    protected void loadMaterials(ConfigurationSection materialNode) {
+        if (materialNode == null)
+            return;
 
-		if (materialSets.containsKey("building")) {
-			buildingMaterials = materialSets.get("building");
-		}
-		if (materialSets.containsKey("indestructible")) {
-			indestructibleMaterials = materialSets.get("indestructible");
-		}
-		if (materialSets.containsKey("restricted")) {
-			restrictedMaterials = materialSets.get("restricted");
-		}
-		if (materialSets.containsKey("destructible")) {
-			destructibleMaterials = materialSets.get("destructible");
-		}
-        if (materialSets.containsKey("interactible")) {
-            interactibleMaterials = materialSets.get("interactible");
-        }
-        if (materialSets.containsKey("containers")) {
-            containerMaterials = materialSets.get("containers");
-        }
-        if (materialSets.containsKey("wearable")) {
-            wearableMaterials = materialSets.get("wearable");
-        }
-        if (materialSets.containsKey("melee")) {
-            meleeMaterials = materialSets.get("melee");
-        }
-        if (materialSets.containsKey("attachable")) {
-            com.elmakers.mine.bukkit.block.UndoList.attachables = materialSets.get("attachable");
-        }
-        if (materialSets.containsKey("attachable_wall")) {
-            com.elmakers.mine.bukkit.block.UndoList.attachablesWall = materialSets.get("attachable_wall");
-        }
-        if (materialSets.containsKey("attachable_double")) {
-            com.elmakers.mine.bukkit.block.UndoList.attachablesDouble = materialSets.get("attachable_double");
-        }
+        materialSetManager.loadMaterials(materialNode);
+
+        buildingMaterials = materialSetManager.getMaterialSetEmpty("building");
+        indestructibleMaterials = materialSetManager
+                .getMaterialSetEmpty("indestructible");
+        restrictedMaterials = materialSetManager
+                .getMaterialSetEmpty("restricted");
+        destructibleMaterials = materialSetManager
+                .getMaterialSetEmpty("destructible");
+        interactibleMaterials = materialSetManager
+                .getMaterialSetEmpty("interactible");
+        containerMaterials = materialSetManager
+                .getMaterialSetEmpty("containers");
+        wearableMaterials = materialSetManager.getMaterialSetEmpty("wearable");
+        meleeMaterials = materialSetManager.getMaterialSetEmpty("melee");
+        com.elmakers.mine.bukkit.block.UndoList.attachables = materialSetManager
+                .getMaterialSetEmpty("attachable");
+        com.elmakers.mine.bukkit.block.UndoList.attachablesWall = materialSetManager
+                .getMaterialSetEmpty("attachable_wall");
+        com.elmakers.mine.bukkit.block.UndoList.attachablesDouble = materialSetManager
+                .getMaterialSetEmpty("attachable_double");
 	}
 
     public void loadInitialProperties(ConfigurationSection properties) {
@@ -3113,118 +3092,7 @@ public class MagicController implements MageController {
 	public boolean canCreateWorlds()
 	{
 		return createWorldsEnabled;
-    }
-
-    // Begin Material Sets
-    @Override
-    public Collection<String> getMaterialSets() {
-        return unmodifiableMaterialSetKeys;
-    }
-
-    @Override
-    public MaterialSet getMaterialSet(String name) {
-        return materialSets.get(name);
-    }
-
-    @Override
-    public MaterialSet getOrCreateMaterialSet(String name) {
-        Preconditions.checkArgument(
-                name != null && !name.isEmpty(),
-                "Invalid key: %s", name);
-
-        return getOrCreateMaterialSet0(name);
-    }
-
-    @Override
-    public MaterialSet getOrCreateMaterialSetNullable(String name) {
-        if (name == null || name.isEmpty()) {
-            return null;
-        }
-
-        return getOrCreateMaterialSet0(name);
-    }
-
-    @Nonnull
-    private MaterialSet getOrCreateMaterialSet0(@Nonnull String name) {
-        MaterialSet materials = materialSets.get(name);
-        if (materials == null) {
-            materials = createMaterialSetFromString(name);
-            materialSets.put(name, materials);
-        }
-
-        return materials;
-    }
-
-    private MaterialSet createMaterialSetFromString(String materialSet) {
-        if (materialSet.equals("*")) {
-            return MaterialSets.wildcard();
-        }
-
-        boolean negate;
-        String materialString;
-        if (materialSet.startsWith("!")) {
-            materialString = materialSet.substring(1);
-            negate = true;
-        } else {
-            materialString = materialSet;
-            negate = false;
-        }
-
-        String[] names = StringUtils.split(materialString, ',');
-        MaterialSet created = createMaterialSetFromStringList(
-                Arrays.asList(names), true);
-        return negate ? created.not() : created;
-    }
-
-    @Nullable
-    private MaterialSet createMaterialSet(ConfigurationSection node,
-            String key) {
-        // TODO: Material sets can refer to other material sets.
-        // Those may not yet be available at this point.
-        // We should either fix this or throw a warning in the future.
-        if (node.isString(key)) {
-            return createMaterialSetFromString(node.getString(key));
-        }
-
-        List<String> materialData = node.getStringList(key);
-        if (materialData == null) {
-            // Ignore malformed data
-            // TODO: Support for explicitly specifying block state and tile meta
-            return null;
-        }
-
-        return createMaterialSetFromStringList(materialData, false);
-    }
-
-    private MaterialSet createMaterialSetFromStringList(
-            List<String> names,
-            boolean resolveNames) {
-
-        MaterialSets.Union union = MaterialSets.unionBuilder();
-        for (String matName : names) {
-            MaterialSet resolved;
-            if (resolveNames
-                    && (resolved = materialSets.get(matName)) != null) {
-                union.add(resolved);
-            } else if (matName.contains("|")) {
-                // TODO: Warn on invalid data
-                MaterialAndData material = ConfigurationUtils
-                        .toMaterialAndData(matName);
-                if (material != null && material.isValid()) {
-                    union.add(material);
-                }
-            } else {
-                // No data specified => Match all materials.
-                Material material = ConfigurationUtils.toMaterial(matName);
-                if (material != null) {
-                    union.add(material);
-                }
-            }
-        }
-
-        return union.build();
-    }
-    /// End Material Sets
+	}
 
 	@Override
 	public void sendToMages(String message, Location location) {
@@ -3286,6 +3154,11 @@ public class MagicController implements MageController {
         if (entity == null) return false;
         String id = mageIdentifier.fromEntity(entity);
         return mages.containsKey(id);
+    }
+
+    @Override
+    public MaterialSetManager getMaterialSetManager() {
+        return materialSetManager;
     }
 
 	@Override
@@ -5072,8 +4945,6 @@ public class MagicController implements MageController {
     private @Nonnull MaterialSet                containerMaterials              = MaterialSets.empty();
     private @Nonnull MaterialSet                wearableMaterials               = MaterialSets.empty();
     private @Nonnull MaterialSet                meleeMaterials                  = MaterialSets.empty();
-    private Map<String, MaterialSet>            materialSets                    = new HashMap<>();
-    private Set<String>                         unmodifiableMaterialSetKeys     = Collections.unmodifiableSet(materialSets.keySet());
 
     private boolean                             backupInventories               = true;
     private int								    undoTimeWindow				    = 6000;
@@ -5243,6 +5114,7 @@ public class MagicController implements MageController {
     private InventoryController                 inventoryController         = null;
     private ExplosionController                 explosionController         = null;
     private MageIdentifier                      mageIdentifier              = new MageIdentifier();
+    private final SimpleMaterialSetManager      materialSetManager          = new SimpleMaterialSetManager();
     private boolean                             citizensEnabled			    = true;
     private boolean                             libsDisguiseEnabled			= true;
     private boolean                             skillAPIEnabled			    = true;
